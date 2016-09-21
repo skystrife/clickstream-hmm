@@ -17,12 +17,14 @@ int main()
     std::string line;
     for (uint64_t lineno = 0; std::getline(std::cin, line); ++lineno)
     {
-        json obj{line};
-        if (obj["timestamp"].get<uint64_t>() < timestamp)
+        auto obj = json::parse(line);
+        auto time = obj["timestamp"].get<uint64_t>();
+        if (time < timestamp)
         {
             std::cout << "Unsorted at line " << lineno << std::endl;
             return 1;
         }
+        timestamp = time;
     }
     std::cout << "All sorted!" << std::endl;
     return 0;
