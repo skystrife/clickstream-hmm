@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 {
     uint64_t max_ram = 1024u * 1024 * 1024 * 8; // 8 GB
     if (argc >= 2)
-        max_ram = std::stoul(argv[1]);
+        max_ram = 1024u * 1024 * 1024 * std::stoul(argv[1]);
 
     logging::set_cerr_logging();
 
