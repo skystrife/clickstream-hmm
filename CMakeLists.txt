@@ -11,3 +11,6 @@ find_package(nlohmann_json REQUIRED)
 
 add_executable(check-sorted src/check_sorted.cpp)
 target_link_libraries(check-sorted nlohmann_json meta-util)
+
+add_executable(sort src/sort.cpp)
+target_link_libraries(sort nlohmann_json meta-util meta-io)
