@@ -65,7 +65,8 @@ uint64_t packed_read(InputStream& in, full_line_record& flr)
 void flush_chunk(uint64_t chunk_num, std::vector<line_record>& lines,
                  const std::vector<char>& buffer)
 {
-    LOG(info) << "Sorting chunk " << chunk_num + 1 << "..." << ENDLG;
+    LOG(info) << "Sorting chunk " << chunk_num + 1 << " of size "
+              << lines.size() << "..." << ENDLG;
     filesystem::make_directory("tmp");
     std::ofstream chunk{"tmp/chunk-" + std::to_string(chunk_num),
                         std::ios::binary};
@@ -121,17 +122,32 @@ int main(int argc, char** argv)
         pos += line.size() + 1;
     }
 
-    if (pos != buffer.data())
-        flush_chunk(num_chunks++, lines, buffer);
+    if (num_chunks > 0)
+    {
+        if (pos != buffer.data())
+            flush_chunk(num_chunks++, lines, buffer);
 
-    std::vector<util::chunk_iterator<full_line_record>> chunks;
-    chunks.reserve(num_chunks);
-    for (uint64_t i = 0; i < num_chunks; ++i)
-        chunks.emplace_back("tmp/chunk-" + std::to_string(i));
+        std::vector<util::chunk_iterator<full_line_record>> chunks;
+        chunks.reserve(num_chunks);
+        for (uint64_t i = 0; i < num_chunks; ++i)
+            chunks.emplace_back("tmp/chunk-" + std::to_string(i));
 
-    util::multiway_merge(
-        chunks.begin(), chunks.end(),
-        [&](full_line_record&& flr) { std::cout << flr.line << "\n"; });
+        util::multiway_merge(
+            chunks.begin(), chunks.end(),
+            [&](full_line_record&& flr) { std::cout << flr.line << "\n"; });
+    }
+    else
+    {
+        LOG(info) << "Sorting " << lines.size() << " records in memory..."
+                  << ENDLG;
+        parallel::thread_pool pool;
+        parallel::sort(lines.begin(), lines.end(), pool);
+
+        LOG(info) << "Writing..." << ENDLG;
+        for (const auto& line : lines)
+            std::cout << util::string_view{buffer.data() + line.byte_pos_}
+                      << "\n";
+    }
 
     return 0;
 }
