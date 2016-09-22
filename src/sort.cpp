@@ -14,6 +14,7 @@
 #include "meta/logging/logger.h"
 #include "meta/parallel/algorithm.h"
 #include "meta/util/multiway_merge.h"
+#include "meta/util/progress.h"
 
 using namespace nlohmann;
 using namespace meta;
@@ -80,8 +81,11 @@ void flush_chunk(uint64_t chunk_num, std::vector<line_record>& lines,
     }
 
     LOG(info) << "Flushing chunk " << chunk_num + 1 << "..." << ENDLG;
+    printing::progress progress{"> Flushing: ", lines.size()};
+    uint64_t lineno = 0;
     for (const auto& rec : lines)
     {
+        progress(++lineno);
         util::string_view sv{buffer.data() + rec.byte_pos_};
         io::packed::write(chunk, rec.timestamp_);
         io::packed::write(chunk, sv);
@@ -163,10 +167,15 @@ int main(int argc, char** argv)
         parallel::thread_pool pool;
         parallel::sort(lines.begin(), lines.end(), pool);
 
-        LOG(info) << "Writing..." << ENDLG;
+        LOG(info) << "Writing final output..." << ENDLG;
+        printing::progress progress{"> Writing: ", lines.size()};
+        uint64_t l = 0;
         for (const auto& line : lines)
+        {
+            progress(++l);
             std::cout << util::string_view{buffer.data() + line.byte_pos_}
                       << "\n";
+        }
     }
 
     LOG(info) << "Found " << bad_lines << " bad lines out of " << lineno << " ("
