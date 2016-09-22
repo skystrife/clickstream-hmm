@@ -100,9 +100,12 @@ int main(int argc, char** argv)
 
     std::string line;
     uint64_t num_chunks = 0;
+    uint64_t lineno = 0;
+    uint64_t bad_lines = 0;
     char* pos = buffer.data();
-    for (uint64_t lineno = 1; std::getline(std::cin, line); ++lineno)
+    while (std::getline(std::cin, line))
     {
+        ++lineno;
         // out of room, so flush a chunk to disk
         if (pos + line.size() + 1 >= buffer.data() + buffer.size())
         {
@@ -125,6 +128,7 @@ int main(int argc, char** argv)
         }
         catch (const std::exception& ex)
         {
+            ++bad_lines;
             LOG(error) << "line " << lineno << ": " << ex.what() << ENDLG;
             LOG(error) << line << ENDLG;
             if (!filesystem::exists("tmp"))
@@ -159,6 +163,9 @@ int main(int argc, char** argv)
             std::cout << util::string_view{buffer.data() + line.byte_pos_}
                       << "\n";
     }
+
+    LOG(info) << "Found " << bad_lines << " bad lines out of " << lineno << " ("
+              << static_cast<double>(bad_lines) / lineno * 100 << "%)" << ENDLG;
 
     return 0;
 }
