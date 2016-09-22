@@ -101,7 +101,7 @@ int main(int argc, char** argv)
     std::string line;
     uint64_t num_chunks = 0;
     char* pos = buffer.data();
-    while (std::getline(std::cin, line))
+    for (uint64_t lineno = 1; std::getline(std::cin, line); ++lineno)
     {
         // out of room, so flush a chunk to disk
         if (pos + line.size() + 1 >= buffer.data() + buffer.size())
@@ -113,13 +113,24 @@ int main(int argc, char** argv)
             pos = buffer.data();
         }
 
-        auto obj = json::parse(line);
-        lines.emplace_back(obj["timestamp"].get<uint64_t>(),
-                           static_cast<uint64_t>(pos - buffer.data()));
+        try
+        {
+            auto obj = json::parse(line);
+            lines.emplace_back(obj["timestamp"].get<uint64_t>(),
+                               static_cast<uint64_t>(pos - buffer.data()));
 
-        // add line to in-memory buffer
-        std::copy(line.begin(), line.end() + 1, pos);
-        pos += line.size() + 1;
+            // add line to in-memory buffer
+            std::copy(line.begin(), line.end() + 1, pos);
+            pos += line.size() + 1;
+        }
+        catch (const std::exception& ex)
+        {
+            LOG(error) << "line " << lineno << ": " << ex.what() << ENDLG;
+            LOG(error) << line << ENDLG;
+            if (!filesystem::exists("tmp"))
+                filesystem::make_directory("tmp");
+            std::ofstream{"tmp/bad.json", std::ios::app} << line << "\n";
+        }
     }
 
     if (num_chunks > 0)
