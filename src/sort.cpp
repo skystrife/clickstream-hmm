@@ -67,12 +67,17 @@ void flush_chunk(uint64_t chunk_num, std::vector<line_record>& lines,
 {
     LOG(info) << "Sorting chunk " << chunk_num + 1 << " of size "
               << lines.size() << "..." << ENDLG;
-    filesystem::make_directory("tmp");
+
+    if (!filesystem::exists("tmp"))
+        filesystem::make_directory("tmp");
+
     std::ofstream chunk{"tmp/chunk-" + std::to_string(chunk_num),
                         std::ios::binary};
 
-    parallel::thread_pool pool;
-    parallel::sort(lines.begin(), lines.end(), pool);
+    {
+        parallel::thread_pool pool;
+        parallel::sort(lines.begin(), lines.end(), pool);
+    }
 
     LOG(info) << "Flushing chunk " << chunk_num + 1 << "..." << ENDLG;
     for (const auto& rec : lines)
