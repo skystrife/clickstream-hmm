@@ -16,5 +16,5 @@ for line in fileinput.input():
         "key": "pageview",
         "value": "https://www.coursera.org/quiz/submit",
         "username": cols[1],
-        "timestamp", int(cols[0])
+        "timestamp": int(cols[0])
     })
