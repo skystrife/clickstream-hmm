@@ -14,3 +14,6 @@ target_link_libraries(check-sorted nlohmann_json meta-util)
 
 add_executable(sort src/sort.cpp)
 target_link_libraries(sort nlohmann_json meta-util meta-io)
+
+add_executable(extract-sequences src/extract_sequences.cpp)
+target_link_libraries(extract-sequences nlohmann_json meta-util meta-io)
