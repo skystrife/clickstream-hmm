@@ -48,20 +48,19 @@ int main()
         std::cout << "Markov Model Initial probs:\n";
         for (state_id init{0}; init < mm.num_states(); ++init)
         {
-            std::cout << "\"" << action_name(init) << "\":\t" << mm.initial_probability(init) << "\n";
+            std::cout << "\"" << action_name(init) << "\":\t"
+                      << mm.initial_probability(init) << "\n";
         }
         std::cout << "\n";
         std::cout << "Markov Model Transition probs:\n";
         for (state_id i{0}; i < mm.num_states(); ++i)
         {
-            std::cout << "\"" << action_name(i) << "\": [";
             for (state_id j{0}; j < mm.num_states(); ++j)
             {
-                std::cout << mm.transition_probability(i, j);
-                if (j + 1 < mm.num_states())
-                    std::cout << ", ";
+                std::cout << action_name(i) << " -> " << action_name(j) << ": "
+                          << mm.transition_probability(i, j) << "\n";
             }
-            std::cout << "]\n";
+            std::cout << "\n";
         }
     }
 
