@@ -104,6 +104,8 @@ int main()
     while (std::getline(std::cin, line))
     {
         auto obj = json::parse(line);
+        if (obj["key"].get<std::string>() != util::string_view{"pageview"})
+            continue;
         auto username = obj["username"].get<std::string>();
         auto timestamp = obj["timestmap"].get<uint64_t>();
         if (auto action = get_action(obj["value"].get<std::string>()))
