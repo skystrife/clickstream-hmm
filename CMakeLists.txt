@@ -22,4 +22,4 @@ add_executable(clickstream-hmm src/clickstream_hmm.cpp)
 target_link_libraries(clickstream-hmm nlohmann_json meta-sequence meta-hmm)
 
 add_executable(print-hmm src/print_hmm.cpp)
-target_link_libraries(print-hmm meta-sequence meta-hmm)
+target_link_libraries(print-hmm nlohmann_json meta-sequence meta-hmm)
