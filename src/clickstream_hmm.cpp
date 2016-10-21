@@ -48,24 +48,31 @@ int main()
     std::vector<std::string> usernames;
     training_data_type train;
     uint64_t total_len = 0;
+    uint64_t total_sequences = 0;
     std::string line;
     while (std::getline(std::cin, line))
     {
         auto obj = json::parse(line);
         usernames.push_back(obj["username"].get<std::string>());
 
-        auto sequences = obj["sequences"].get<sequence_type>();;
+        auto sequences = obj["sequences"].get<sequence_type>();
+        ;
         train.push_back(sequences);
 
         for (const auto& seq : sequences)
             total_len += seq.size();
+
+        total_sequences += sequences.size();
     }
 
     LOG(info) << "Training data consumed!" << ENDLG;
     LOG(info) << "Users: " << usernames.size() << ENDLG;
-    LOG(info) << "Sequences: " << train.size() << ENDLG;
-    LOG(info) << "Average length: "
-              << static_cast<double>(total_len) / train.size() << ENDLG;
+    LOG(info) << "Sequences: " << total_sequences << ENDLG;
+    LOG(info) << "Sequences per user: "
+              << static_cast<double>(total_sequences) / usernames.size()
+              << ENDLG;
+    LOG(info) << "Average sequence length: "
+              << static_cast<double>(total_len) / total_sequences << ENDLG;
 
     std::mt19937 rng{47};
 
