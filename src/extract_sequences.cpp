@@ -107,7 +107,7 @@ int main()
         if (obj["key"].get<std::string>() != util::string_view{"pageview"})
             continue;
         auto username = obj["username"].get<std::string>();
-        auto timestamp = obj["timestmap"].get<uint64_t>();
+        auto timestamp = obj["timestamp"].get<uint64_t>();
         if (auto action = get_action(obj["value"].get<std::string>()))
             insert_new_action(store, username, *action, timestamp);
     }
