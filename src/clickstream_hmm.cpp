@@ -54,12 +54,11 @@ int main()
         auto obj = json::parse(line);
         usernames.push_back(obj["username"].get<std::string>());
 
-        auto sequences = obj["sequences"];
+        auto sequences = obj["sequences"].get<sequence_type>();;
+        train.push_back(sequences);
+
         for (const auto& seq : sequences)
-        {
-            train.push_back(seq.get<sequence_type>());
-            total_len += train.back().size();
-        }
+            total_len += seq.size();
     }
 
     LOG(info) << "Training data consumed!" << ENDLG;
