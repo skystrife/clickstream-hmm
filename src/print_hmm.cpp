@@ -36,7 +36,8 @@ int main(int argc, char** argv)
 
     if (argc != 2)
     {
-        std::cerr << "Usage: " << argv[0] << " human|json" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " human|json|json-trans"
+                  << std::endl;
         return 1;
     }
 
@@ -97,6 +98,22 @@ int main(int argc, char** argv)
             }
             std::cout << arr << "\n";
         }
+    }
+    else if (argv[1] == util::string_view{"json-trans"})
+    {
+        auto arr = json::array();
+        for (state_id i{0}; i < hmm.num_states(); ++i)
+        {
+            auto trans = json::array();
+            for (state_id j{0}; j < hmm.num_states(); ++j)
+            {
+                trans.push_back(hmm.trans_prob(i, j));
+            }
+
+            arr.push_back(
+                {{"name", i}, {"init", hmm.init_prob(i)}, {"edges", trans}});
+        }
+        std::cout << arr << "\n";
     }
     else
     {
