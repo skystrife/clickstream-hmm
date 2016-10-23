@@ -36,9 +36,17 @@ util::string_view action_name(sequence::state_id aid)
     return actions[aid];
 }
 
-int main()
+int main(int argc, char** argv)
 {
     logging::set_cerr_logging();
+
+    if (argc != 2)
+    {
+        std::cerr << "Usage: " << argv[0] << " num_states" << std::endl;
+        return 1;
+    }
+
+    uint64_t num_states = std::stoull(argv[1]);
 
     using namespace sequence;
     using action_sequence_type = std::vector<state_id>;
@@ -78,7 +86,6 @@ int main()
 
     using namespace hmm;
 
-    const uint64_t num_states = 6;
     const uint64_t num_actions = 10;
     const double smoothing_constant = 1e-6;
 
