@@ -13,6 +13,7 @@
 #include "meta/logging/logger.h"
 #include "meta/sequence/hmm/hmm.h"
 #include "meta/sequence/hmm/sequence_observations.h"
+#include "meta/stats/running_stats.h"
 #include "meta/util/identifiers.h"
 
 using namespace nlohmann;
@@ -55,20 +56,20 @@ int main(int argc, char** argv)
 
     std::vector<std::string> usernames;
     training_data_type train;
-    uint64_t total_len = 0;
-    uint64_t total_sequences = 0;
+
+    stats::running_stats stats;
     std::string line;
+    uint64_t total_sequences = 0;
     while (std::getline(std::cin, line))
     {
         auto obj = json::parse(line);
         usernames.push_back(obj["username"].get<std::string>());
 
         auto sequences = obj["sequences"].get<sequence_type>();
-        ;
         train.push_back(sequences);
 
         for (const auto& seq : sequences)
-            total_len += seq.size();
+            stats.add(seq.size());
 
         total_sequences += sequences.size();
     }
@@ -79,8 +80,8 @@ int main(int argc, char** argv)
     LOG(info) << "Sequences per user: "
               << static_cast<double>(total_sequences) / usernames.size()
               << ENDLG;
-    LOG(info) << "Average sequence length: "
-              << static_cast<double>(total_len) / total_sequences << ENDLG;
+    LOG(info) << "Average sequence length: " << stats.mean() << ENDLG;
+    LOG(info) << "Variance of sequence length: " << stats.variance() << ENDLG;
 
     std::mt19937 rng{47};
 
