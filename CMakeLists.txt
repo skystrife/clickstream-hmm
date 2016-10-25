@@ -22,5 +22,9 @@ add_executable(clickstream-hmm src/clickstream_hmm.cpp)
 target_link_libraries(clickstream-hmm nlohmann_json meta-sequence meta-hmm
     meta-stats)
 
+add_executable(retrofit-hmm src/retrofit_hmm.cpp)
+target_link_libraries(retrofit-hmm nlohmann_json meta-sequence meta-hmm
+    meta-stats meta-io)
+
 add_executable(print-hmm src/print_hmm.cpp)
 target_link_libraries(print-hmm nlohmann_json meta-sequence meta-hmm)
