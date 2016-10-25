@@ -43,13 +43,11 @@ int main(int argc, char** argv)
 {
     logging::set_cerr_logging();
 
-    if (argc != 4)
+    if (argc != 3)
     {
-        std::cerr << "Usage: " << argv[0] << " input output num_states" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " input output" << std::endl;
         return 1;
     }
-
-    uint64_t num_states = std::stoull(argv[1]);
 
     using namespace sequence;
     using action_sequence_type = std::vector<state_id>;
