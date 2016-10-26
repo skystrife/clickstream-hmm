@@ -4,6 +4,8 @@
  * the latent state representation Markov models fixed.
  */
 
+#define META_DISABLE_HMM_OBSERVATION_UPDATE 1
+
 #include <array>
 #include <exception>
 
@@ -18,8 +20,6 @@
 
 using namespace nlohmann;
 using namespace meta;
-
-#define META_DISABLE_HMM_OBSERVATION_UPDATE 1
 
 util::string_view action_name(sequence::state_id aid)
 {
