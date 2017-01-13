@@ -23,6 +23,10 @@ for line in fileinput.input():
          vertex_size=[200 * weight for weight in
              graph.personalized_pagerank(weights='weight', reset='weight')],
          target="state{}.png".format(g),
-         layout=graph.layout_circle(), margin=100, vertex_label_dist=1)
+         layout=graph.layout_circle(),
+         margin=(120, 100, 110, 100),
+         vertex_label_dist=1.5,
+         vertex_label_size=30,
+         vertex_label_angle=-math.pi/2)
 
     g += 1
