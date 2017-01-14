@@ -1,8 +1,10 @@
 /**
- * @file clickstream_hmm.cpp
- * Fits a hidden markov model with sequence observations to the extracted
- * sequences for students from a Coursera clickstream dump.
+ * @file retrofit_hmm.cpp
+ * Re-fits only the latent state transition probabilities to data, keeping
+ * the latent state representation Markov models fixed.
  */
+
+#define META_DISABLE_HMM_OBSERVATION_UPDATE 1
 
 #include <array>
 #include <exception>
@@ -41,13 +43,11 @@ int main(int argc, char** argv)
 {
     logging::set_cerr_logging();
 
-    if (argc != 2)
+    if (argc != 3)
     {
-        std::cerr << "Usage: " << argv[0] << " num_states" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " input output" << std::endl;
         return 1;
     }
-
-    uint64_t num_states = std::stoull(argv[1]);
 
     using namespace sequence;
     using action_sequence_type = std::vector<state_id>;
@@ -87,27 +87,19 @@ int main(int argc, char** argv)
 
     using namespace hmm;
 
-    const uint64_t num_actions = 10;
-    const double smoothing_constant = 1e-6;
-
-    sequence_observations obs_dist{
-        num_states, num_actions, rng,
-        stats::dirichlet<state_id>{smoothing_constant, num_actions}};
-
     parallel::thread_pool pool;
-    hidden_markov_model<sequence_observations> hmm{
-        num_states, rng, std::move(obs_dist),
-        stats::dirichlet<state_id>{smoothing_constant, num_states}};
+    io::gzifstream input{argv[1]};
+    hidden_markov_model<sequence_observations> hmm{input};
 
     decltype(hmm)::training_options options;
     options.delta = 1e-4;
     options.max_iters = 50;
 
-    LOG(info) << "Beginning training..." << ENDLG;
+    LOG(info) << "Beginning retrofitting..." << ENDLG;
     hmm.fit(train, pool, options);
 
-    LOG(info) << "Saving model..." << ENDLG;
-    io::gzofstream output{"hmm-model.gz"};
+    LOG(info) << "Saving modified model..." << ENDLG;
+    io::gzofstream output{argv[2]};
     hmm.save(output);
 
     return 0;

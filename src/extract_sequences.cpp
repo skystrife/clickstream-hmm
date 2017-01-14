@@ -108,8 +108,17 @@ int main()
             continue;
         auto username = obj["username"].get<std::string>();
         auto timestamp = obj["timestamp"].get<uint64_t>();
+        // new dumps appear to set some cleaned url in "value"; use that if
+        // we can
         if (auto action = get_action(obj["value"].get<std::string>()))
+        {
             insert_new_action(store, username, *action, timestamp);
+        }
+        // otherwise use the value in page_url, which always exists
+        else if (auto action = get_action(obj["page_url"].get<std::string>()))
+        {
+            insert_new_action(store, username, *action, timestamp);
+        }
     }
 
     for (const auto& pr : store)

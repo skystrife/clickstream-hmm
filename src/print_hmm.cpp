@@ -34,17 +34,21 @@ int main(int argc, char** argv)
 {
     logging::set_cerr_logging();
 
-    if (argc != 2)
+    if (argc < 2)
     {
         std::cerr << "Usage: " << argv[0] << " human|json|json-trans"
                   << std::endl;
         return 1;
     }
 
+    const char* filename = "hmm-model.gz";
+    if (argc > 2)
+        filename = argv[2];
+
     using namespace sequence;
     using namespace hmm;
 
-    io::gzifstream input{"hmm-model.gz"};
+    io::gzifstream input{filename};
     hidden_markov_model<sequence_observations> hmm{input};
 
     const auto& obs_dist = hmm.observation_distribution();
