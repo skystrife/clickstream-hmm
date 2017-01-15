@@ -31,3 +31,9 @@ target_link_libraries(print-hmm nlohmann_json meta-sequence meta-hmm)
 
 add_executable(decode src/decode.cpp)
 target_link_libraries(decode nlohmann_json meta-sequence meta-hmm)
+
+add_executable(classify-students src/classify_students.cpp)
+target_link_libraries(classify-students nlohmann_json meta-classify)
+
+add_executable(rank-students src/rank_students.cpp)
+target_link_libraries(rank-students nlohmann_json meta-eval meta-stats)
