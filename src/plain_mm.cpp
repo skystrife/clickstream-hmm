@@ -31,7 +31,7 @@ void to_json(json& j, const identifier<Tag, T>& i)
 template <class Tag, class T>
 void from_json(const json& j, identifier<Tag, T>& i)
 {
-    i = j.get<T>();
+    i = identifier<Tag, T>{j.get<T>()};
 }
 } // namespace util
 } // namespace meta
