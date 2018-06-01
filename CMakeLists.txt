@@ -45,3 +45,9 @@ target_link_libraries(classify-students meta-classify)
 
 add_executable(rank-students src/rank_students.cpp)
 target_link_libraries(rank-students meta-eval meta-stats)
+
+add_executable(plain-mm src/plain_mm.cpp)
+target_link_libraries(plain-mm meta-sequence meta-stats meta-io)
+
+add_executable(print-plain-mm src/print_plain_mm.cpp)
+target_link_libraries(print-plain-mm meta-sequence)
