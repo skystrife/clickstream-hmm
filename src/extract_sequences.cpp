@@ -80,9 +80,9 @@ void insert_new_action(student_record_map& store, const std::string& username,
     if (it == store.end())
         it = store.insert(username, memory_student_record{});
 
-    // if the last action was more than 30 minutes ago, this is the start
+    // if the last action was more than 10 hours ago, this is the start
     // of a new sequence
-    if (timestamp > it->value().last_action_time + 30 * 60 * 1000)
+    if (timestamp > it->value().last_action_time + 10 * 60 * 60 * 1000)
     {
         it->value().sequences.emplace_back(1, aid);
     }
