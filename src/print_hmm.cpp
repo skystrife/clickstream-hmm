@@ -12,6 +12,24 @@
 using namespace nlohmann;
 using namespace meta;
 
+namespace meta
+{
+namespace util
+{
+template <class Tag, class T>
+void to_json(json& j, const identifier<Tag, T>& i)
+{
+    j = static_cast<T>(i);
+}
+
+template <class Tag, class T>
+void from_json(const json& j, identifier<Tag, T>& i)
+{
+    i = j.get<T>();
+}
+} // namespace sequence
+} // namespace meta
+
 util::string_view action_name(sequence::state_id aid)
 {
     const static std::array<util::string_view, 10> actions

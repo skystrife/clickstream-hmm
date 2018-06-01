@@ -1,0 +1,4 @@
+[submodule "deps/meta"]
+	path = deps/meta
+	url = https://github.com/meta-toolkit/meta.git
+	branch = develop

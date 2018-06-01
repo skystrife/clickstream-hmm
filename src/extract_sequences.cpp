@@ -25,6 +25,24 @@ using namespace meta;
 
 MAKE_NUMERIC_IDENTIFIER_UDL(action_id, uint64_t, _aid)
 
+namespace meta
+{
+namespace util
+{
+template <class Tag, class T>
+void to_json(json& j, const identifier<Tag, T>& i)
+{
+    j = static_cast<T>(i);
+}
+
+template <class Tag, class T>
+void from_json(const json& j, identifier<Tag, T>& i)
+{
+    i = j.get<T>();
+}
+} // namespace sequence
+} // namespace meta
+
 using action_sequence = std::vector<action_id>;
 
 struct student_record

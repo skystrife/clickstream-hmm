@@ -4,16 +4,14 @@
  * the latent state representation Markov models fixed.
  */
 
-#define META_DISABLE_HMM_OBSERVATION_UPDATE 1
-
 #include <array>
 #include <exception>
 
 #include "json.hpp"
+#include "retrofit_hmm.h"
 
 #include "meta/io/gzstream.h"
 #include "meta/logging/logger.h"
-#include "meta/sequence/hmm/hmm.h"
 #include "meta/sequence/hmm/sequence_observations.h"
 #include "meta/stats/running_stats.h"
 #include "meta/util/identifiers.h"
