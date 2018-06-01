@@ -18,6 +18,25 @@
 using namespace nlohmann;
 using namespace meta;
 
+namespace meta
+{
+namespace util
+{
+template <class Tag, class T>
+void to_json(json& j, const identifier<Tag, T>& i)
+{
+    j = static_cast<T>(i);
+}
+
+template <class Tag, class T>
+void from_json(const json& j, identifier<Tag, T>& i)
+{
+    i = j.get<T>();
+}
+} // namespace util
+} // namespace meta
+
+
 util::string_view action_name(sequence::state_id aid)
 {
     const static std::array<util::string_view, 10> actions
@@ -89,7 +108,20 @@ int main()
     }
 
     markov_model mm{std::move(counts)};
-    mm.save(std::cout);
+    auto arr = json::array();
+    for (state_id i{0}; i < mm.num_states(); ++i)
+    {
+        auto trans = json::array();
+        for (state_id j{0}; j < mm.num_states(); ++j)
+        {
+            trans.push_back(mm.transition_probability(i, j));
+        }
+
+        arr.push_back({{"name", action_name(i).to_string()},
+                       {"init", mm.initial_probability(i)},
+                       {"edges", trans}});
+    }
+    std::cout << arr << "\n";
 
     return 0;
 }
